@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -53,50 +54,52 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      body: Center(
-        child: Stack(
-          children: [
-            CustomPaint(
-              painter: Painter(offsets, currentColor),
-              child: GestureDetector(
-                onPanStart: (details) {
+      body: SafeArea(
+        child: Center(
+          child: Stack(
+            children: [
+              CustomPaint(
+                painter: Painter(offsets, currentColor),
+                child: GestureDetector(
+                  onPanStart: (details) {
+                    setState(() {
+                      offsets.add(details.localPosition);
+                    });
+                  },
+                  onPanUpdate: (details) {
+                    setState(() {
+                      offsets.add(details.localPosition);
+                    });
+                  },
+                  onPanEnd: (details) {
+                    setState(() {
+                      offsets.add(Offset.zero);
+                    });
+                  },
+                ),
+              ),
+              DropdownButton(
+                // Initial Value
+                value: currentColor,
+      
+                // Down Arrow Icon
+                icon: const Icon(Icons.keyboard_arrow_down),
+      
+                // Array list of items
+                items: colors.map<DropdownMenuItem<Color>>((Color value) {
+                  return DropdownMenuItem<Color>(
+                    value: value,
+                    child: Text(value.toString()),
+                  );
+                }).toList(),
+                onChanged: (value) => {
                   setState(() {
-                    offsets.add(details.localPosition);
-                  });
-                },
-                onPanUpdate: (details) {
-                  setState(() {
-                    offsets.add(details.localPosition);
-                  });
-                },
-                onPanEnd: (details) {
-                  setState(() {
-                    offsets.add(Offset.zero);
-                  });
+                    currentColor = value as Color;
+                  })
                 },
               ),
-            ),
-            DropdownButton(
-              // Initial Value
-              value: currentColor,
-
-              // Down Arrow Icon
-              icon: const Icon(Icons.keyboard_arrow_down),
-
-              // Array list of items
-              items: colors.map<DropdownMenuItem<Color>>((Color value) {
-                return DropdownMenuItem<Color>(
-                  value: value,
-                  child: Text(value.toString()),
-                );
-              }).toList(),
-              onChanged: (value) => {
-                setState(() {
-                  currentColor = value as Color;
-                })
-              },
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

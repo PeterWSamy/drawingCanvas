@@ -13,7 +13,7 @@ class Painter extends CustomPainter {
   Painter(this.offsets,this.currentColor): super();
   @override
   void paint(Canvas canvas, Size size) {
-    for(int i  =  0; i < offsets.length; i++) {
+    for(int i  =  0; i < offsets.length-1; i++) {
       if(offsets[i] != Offset.zero && offsets[i+1] != Offset.zero) {
         canvas.drawLine(offsets[i], offsets[i+1], paints..color = currentColor);
       } else if(offsets[i] != Offset.zero && offsets[i+1] == Offset.zero) {
