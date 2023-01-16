@@ -42,6 +42,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Offset> offsets = <Offset>[];
+  Color currentColor = Colors.black;
+  List<Color> colors = [Colors.black, Colors.red, Colors.green, Colors.blue];
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -51,31 +53,50 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
       body: Center(
-        child: CustomPaint(
-          painter: Painter(offsets),
-          child: GestureDetector(
-            onPanStart: (details) {
-              setState(() {
-                offsets.add(details.localPosition);
-              });
-            },
-            onPanUpdate: (details) {
-              setState(() {
-                offsets.add(details.localPosition);
-              });
-            },
-            onPanEnd: (details) {
-              setState(() {
-                offsets.add(Offset.zero);
-              });
-            },
-          ),
+        child: Stack(
+          children: [
+            CustomPaint(
+              painter: Painter(offsets, currentColor),
+              child: GestureDetector(
+                onPanStart: (details) {
+                  setState(() {
+                    offsets.add(details.localPosition);
+                  });
+                },
+                onPanUpdate: (details) {
+                  setState(() {
+                    offsets.add(details.localPosition);
+                  });
+                },
+                onPanEnd: (details) {
+                  setState(() {
+                    offsets.add(Offset.zero);
+                  });
+                },
+              ),
+            ),
+            DropdownButton(
+              // Initial Value
+              value: currentColor,
+
+              // Down Arrow Icon
+              icon: const Icon(Icons.keyboard_arrow_down),
+
+              // Array list of items
+              items: colors.map<DropdownMenuItem<Color>>((Color value) {
+                return DropdownMenuItem<Color>(
+                  value: value,
+                  child: Text(value.toString()),
+                );
+              }).toList(),
+              onChanged: (value) => {
+                setState(() {
+                  currentColor = value as Color;
+                })
+              },
+            ),
+          ],
         ),
       ),
     );
