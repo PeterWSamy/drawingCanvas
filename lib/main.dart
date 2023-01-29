@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:zoom_widget/zoom_widget.dart';
 
 import 'painter.dart';
 
@@ -44,7 +46,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<Offset> offsets = <Offset>[];
   Color currentColor = Colors.black;
-  List<Color> colors = [Colors.black, Colors.red, Colors.green, Colors.blue];
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -59,44 +60,80 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Stack(
             children: [
               CustomPaint(
-                painter: Painter(offsets, currentColor),
-                child: GestureDetector(
-                  onPanStart: (details) {
-                    setState(() {
-                      offsets.add(details.localPosition);
-                    });
-                  },
-                  onPanUpdate: (details) {
-                    setState(() {
-                      offsets.add(details.localPosition);
-                    });
-                  },
-                  onPanEnd: (details) {
-                    setState(() {
-                      offsets.add(Offset.zero);
-                    });
-                  },
+                  painter: Painter(offsets, currentColor),
+                  child: GestureDetector(
+                    onPanStart: (details) {
+                      setState(() {
+                        offsets.add(details.localPosition);
+                      });
+                    },
+                    onPanUpdate: (details) {
+                      setState(() {
+                        offsets.add(details.localPosition);
+                      });
+                    },
+                    onPanEnd: (details) {
+                      setState(() {
+                        offsets.add(Offset.zero);
+                      });
+                    },
+                  ),
                 ),
-              ),
-              DropdownButton(
-                // Initial Value
-                value: currentColor,
-      
-                // Down Arrow Icon
-                icon: const Icon(Icons.keyboard_arrow_down),
-      
-                // Array list of items
-                items: colors.map<DropdownMenuItem<Color>>((Color value) {
-                  return DropdownMenuItem<Color>(
-                    value: value,
-                    child: Text(value.toString()),
-                  );
-                }).toList(),
-                onChanged: (value) => {
-                  setState(() {
-                    currentColor = value as Color;
-                  })
-                },
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: FloatingActionButton(
+                        backgroundColor: Colors.blue.shade900,
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Pick a color!'),
+                                  content: SingleChildScrollView(
+                                    child: ColorPicker(
+                                      pickerColor: currentColor,
+                                      onColorChanged: (Color color) {
+                                        setState(() {
+                                          currentColor = color;
+                                        });
+                                      },
+                                      pickerAreaHeightPercent: 0.8,
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: const Text('Got it'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child:  Icon(Icons.circle, color: currentColor,size: 55,)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: FloatingActionButton(
+                        backgroundColor: Colors.blue.shade900,
+                        onPressed: () {
+                          setState(() {
+                            offsets.clear();
+                          });
+                        },
+                        child: const Icon(
+                          Icons.delete,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
